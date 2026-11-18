@@ -1,0 +1,97 @@
+OK: adapter=cursor agents_installed=2 agents_preserved=0 legacy_managed_removed=0 devflow=linked devflow-clarify-requirements=linked
+OK: adapter=claude agents_installed=2 agents_preserved=0 legacy_managed_removed=0 devflow=linked devflow-clarify-requirements=linked
+OK: adapter=claude agents_installed=2 agents_preserved=0 legacy_managed_removed=0 devflow=copied devflow-clarify-requirements=copied
+OK: adapter=claude agents_installed=2 agents_preserved=0 legacy_managed_removed=0 devflow=copied devflow-clarify-requirements=copied
+OK: adapters=7 logical_roles=10 host_agents=6 artifacts=11
+OK: Classic Cursor/Claude bundles match their generator
+test_small_project_reaches_verified_completion (test_cli_e2e.CliEndToEndTests.test_small_project_reaches_verified_completion)
+Exercise the public CLI, real code/tests, artifacts, and completion gate. ... ok
+test_context_discovers_project_rules_and_nested_manifests (test_regressions.ContextAndPromptTests.test_context_discovers_project_rules_and_nested_manifests) ... ok
+test_design_prompt_requires_agent_self_validation (test_regressions.ContextAndPromptTests.test_design_prompt_requires_agent_self_validation) ... ok
+test_every_stage_has_nonempty_stage_rules (test_regressions.ContextAndPromptTests.test_every_stage_has_nonempty_stage_rules) ... ok
+test_explicit_profile_handles_ambiguous_project (test_regressions.ContextAndPromptTests.test_explicit_profile_handles_ambiguous_project) ... ok
+test_prompt_embeds_only_selected_upstream_sections (test_regressions.ContextAndPromptTests.test_prompt_embeds_only_selected_upstream_sections) ... ok
+test_prompt_injects_stage_and_detected_profile_rules (test_regressions.ContextAndPromptTests.test_prompt_injects_stage_and_detected_profile_rules) ... ok
+test_review_prompt_contains_severity_gate (test_regressions.ContextAndPromptTests.test_review_prompt_contains_severity_gate) ... ok
+test_test_prompt_uses_existing_layers_and_allows_only_test_writes (test_regressions.ContextAndPromptTests.test_test_prompt_uses_existing_layers_and_allows_only_test_writes) ... ok
+test_codebuddy_adapter_requires_team_member_dispatch (test_regressions.LifecycleTests.test_codebuddy_adapter_requires_team_member_dispatch) ... ok
+test_codebuddy_cleanup_deletes_only_the_exact_team (test_regressions.LifecycleTests.test_codebuddy_cleanup_deletes_only_the_exact_team) ... ok
+test_coordinator_stages_and_executor_type_guard (test_regressions.LifecycleTests.test_coordinator_stages_and_executor_type_guard) ... ok
+test_fresh_team_resume_abandons_old_in_progress_executor (test_regressions.LifecycleTests.test_fresh_team_resume_abandons_old_in_progress_executor) ... ok
+test_large_keeps_knowledge_and_legacy_medium_route_remains_valid (test_regressions.LifecycleTests.test_large_keeps_knowledge_and_legacy_medium_route_remains_valid) ... ok
+test_medium_lifecycle_conditionally_skips_knowledge_without_agent (test_regressions.LifecycleTests.test_medium_lifecycle_conditionally_skips_knowledge_without_agent) ... ok
+test_missing_resume_state_returns_one_cleanup_action_without_retry (test_regressions.LifecycleTests.test_missing_resume_state_returns_one_cleanup_action_without_retry) ... ok
+test_new_run_with_same_slug_does_not_reuse_stale_codebuddy_team (test_regressions.LifecycleTests.test_new_run_with_same_slug_does_not_reuse_stale_codebuddy_team) ... ok
+test_policy_v2_codebuddy_state_remains_resumable (test_regressions.LifecycleTests.test_policy_v2_codebuddy_state_remains_resumable) ... ok
+test_prepare_can_emit_prompt_in_one_cli_call (test_regressions.LifecycleTests.test_prepare_can_emit_prompt_in_one_cli_call) ... ok
+test_requirement_confirmation_is_mandatory_in_auto_mode (test_regressions.LifecycleTests.test_requirement_confirmation_is_mandatory_in_auto_mode) ... ok
+test_solo_overflow_leaves_a_resumable_medium_state (test_regressions.LifecycleTests.test_solo_overflow_leaves_a_resumable_medium_state) ... ok
+test_unassigned_policy_v2_codebuddy_state_can_upgrade_to_team (test_regressions.LifecycleTests.test_unassigned_policy_v2_codebuddy_state_can_upgrade_to_team) ... ok
+test_valuable_medium_knowledge_candidate_enables_stage (test_regressions.LifecycleTests.test_valuable_medium_knowledge_candidate_enables_stage) ... ok
+test_api_change_report_requires_fixed_generated_document (test_regressions.MarkdownRegressionTests.test_api_change_report_requires_fixed_generated_document) ... ok
+test_code_comment_is_not_a_heading (test_regressions.MarkdownRegressionTests.test_code_comment_is_not_a_heading) ... ok
+test_generated_fallback_api_document_must_be_filled (test_regressions.MarkdownRegressionTests.test_generated_fallback_api_document_must_be_filled) ... ok
+test_plan_error_names_file_and_section (test_regressions.MarkdownRegressionTests.test_plan_error_names_file_and_section) ... ok
+test_plan_with_commented_shell_commands_passes (test_regressions.MarkdownRegressionTests.test_plan_with_commented_shell_commands_passes) ... ok
+test_project_without_e2e_can_use_existing_test_layers (test_regressions.MarkdownRegressionTests.test_project_without_e2e_can_use_existing_test_layers) ... ok
+test_required_report_heading_cannot_be_omitted (test_regressions.MarkdownRegressionTests.test_required_report_heading_cannot_be_omitted) ... ok
+
+----------------------------------------------------------------------
+Ran 30 tests in 4.031s
+
+OK
+test_commands_use_project_state_and_leave_profile_unmodified (test_hermes_plugin.HermesPluginTests.test_commands_use_project_state_and_leave_profile_unmodified) ... ok
+test_register_uses_public_slash_command_api (test_hermes_plugin.HermesPluginTests.test_register_uses_public_slash_command_api) ... ok
+test_all_host_and_edition_combinations_install_and_update (test_installer.InstallerTests.test_all_host_and_edition_combinations_install_and_update) ... ok
+test_classic_install_makes_observability_hook_executable (test_installer.InstallerTests.test_classic_install_makes_observability_hook_executable) ... ok
+test_codebuddy_copy_contains_runnable_generic_adapter_installer (test_installer.InstallerTests.test_codebuddy_copy_contains_runnable_generic_adapter_installer) ... ok
+test_codebuddy_portable_agents_use_autorun_bypass_permissions (test_installer.InstallerTests.test_codebuddy_portable_agents_use_autorun_bypass_permissions) ... ok
+test_doctor_lists_paths_and_keeps_exit_code (test_installer.InstallerTests.test_doctor_lists_paths_and_keeps_exit_code) ... ok
+test_dsh_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests.test_dsh_installs_portable_skills_and_rejects_classic) ... ok
+test_edition_registry_is_complete_and_sources_exist (test_installer.InstallerTests.test_edition_registry_is_complete_and_sources_exist) ... ok
+test_editions_and_plan_make_the_split_visible_without_writing (test_installer.InstallerTests.test_editions_and_plan_make_the_split_visible_without_writing) ... ok
+test_force_edition_switch_preserves_modified_old_only_file (test_installer.InstallerTests.test_force_edition_switch_preserves_modified_old_only_file) ... ok
+test_force_install_switches_editions_in_both_directions (test_installer.InstallerTests.test_force_install_switches_editions_in_both_directions) ... ok
+test_force_replaces_conflicting_skill_symlink_without_touching_target (test_installer.InstallerTests.test_force_replaces_conflicting_skill_symlink_without_touching_target) ... ok
+test_force_update_overwrites_modified_managed_file (test_installer.InstallerTests.test_force_update_overwrites_modified_managed_file) ... ok
+test_hermes_installs_project_skills_and_rejects_classic (test_installer.InstallerTests.test_hermes_installs_project_skills_and_rejects_classic) ... ok
+test_install_output_names_project_and_next_entrypoint (test_installer.InstallerTests.test_install_output_names_project_and_next_entrypoint) ... ok
+test_pi_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests.test_pi_installs_portable_skills_and_rejects_classic) ... ok
+test_pi_is_portable_only (test_installer.InstallerTests.test_pi_is_portable_only) ... ok
+test_portable_install_keeps_skill_manifest_with_copied_skills (test_installer.InstallerTests.test_portable_install_keeps_skill_manifest_with_copied_skills) ... ok
+test_same_host_cannot_mix_editions (test_installer.InstallerTests.test_same_host_cannot_mix_editions) ... ok
+test_skills_command_installs_and_manages_portable_edition (test_installer.InstallerTests.test_skills_command_installs_and_manages_portable_edition) ... ok
+test_skills_status_files (test_installer.InstallerTests.test_skills_status_files) ... ok
+test_status_and_doctor_without_new_flags_keep_current_strings (test_installer.InstallerTests.test_status_and_doctor_without_new_flags_keep_current_strings) ... ok
+test_status_files_clean_install_lists_nothing (test_installer.InstallerTests.test_status_files_clean_install_lists_nothing) ... ok
+test_status_files_does_not_weaken_user_file_protection (test_installer.InstallerTests.test_status_files_does_not_weaken_user_file_protection) ... ok
+test_status_files_lists_edited_deleted_directory_and_symlink (test_installer.InstallerTests.test_status_files_lists_edited_deleted_directory_and_symlink) ... ok
+test_status_json_files_keys (test_installer.InstallerTests.test_status_json_files_keys) ... ok
+test_status_patch_binary_file (test_installer.InstallerTests.test_status_patch_binary_file) ... ok
+test_status_patch_contains_edited_line (test_installer.InstallerTests.test_status_patch_contains_edited_line) ... ok
+test_status_patch_labels_package_content_change (test_installer.InstallerTests.test_status_patch_labels_package_content_change) ... ok
+test_uninstall_preserves_modified_file (test_installer.InstallerTests.test_uninstall_preserves_modified_file) ... ok
+test_untracked_user_file_conflict_is_atomic (test_installer.InstallerTests.test_untracked_user_file_conflict_is_atomic) ... ok
+test_update_rejects_modified_managed_file (test_installer.InstallerTests.test_update_rejects_modified_managed_file) ... ok
+test_update_restores_missing_executable_bit_on_hook (test_installer.InstallerTests.test_update_restores_missing_executable_bit_on_hook) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 2.456s
+
+OK
+OK: skills install host=codex project=/tmp/tmp8udaik12/project written=90 unchanged=0
+Next: reopen Codex and run $devflow <你的需求>
+OK: assets and installations are healthy
+OK: install edition=classic host=claude project=/tmp/tmp.nVrGcAer5h/cli-project written=73 unchanged=0
+Next: reopen Claude Code and run /start-devflow <你的需求>
+classic/claude: files=73 changed=0 missing=0
+OK: uninstall host=claude removed=73 preserved=0
+OK: skills install host=codebuddy project=/tmp/tmp.nVrGcAer5h/codebuddy-project written=91 unchanged=0
+Next: reopen CodeBuddy and run /devflow <你的需求>
+OK: skills install host=pi project=/tmp/tmp.nVrGcAer5h/pi-project written=88 unchanged=0
+Next: reopen Pi and run /skill:devflow <你的需求>
+Note: Pi isolated mode also needs the public extension: pi install npm:pi-subagents
+OK: adapter=claude agents_installed=2 agents_preserved=0 legacy_managed_removed=0 devflow=copied devflow-clarify-requirements=copied
+Permission hook regression test passed.
+Installation smoke test passed.
+EXIT:0

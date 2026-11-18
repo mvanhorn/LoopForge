@@ -1,0 +1,10 @@
+[1/6] Checking forbidden public content
+[2/6] Checking shell syntax
+[3/6] Checking JavaScript and Python syntax
+[4/6] Checking JSON, YAML, Markdown links, and Skill metadata
+[5/6] Checking generated Classic host bundles and portable contracts
+OK: Classic Cursor/Claude bundles match their generator
+OK: adapters=7 logical_roles=10 host_agents=6 artifacts=11
+[6/6] Checking public structure
+Validation passed.
+EXIT:0

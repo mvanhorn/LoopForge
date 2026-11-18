@@ -1,0 +1,47 @@
+Using CPython 3.8.20
+Creating virtual environment at: .venv
+   Building devflow-workflow @ file:///workspace/local
+      Built devflow-workflow @ file:///workspace/local
+Installed 1 package in 0.93ms
+test_commands_use_project_state_and_leave_profile_unmodified (test_hermes_plugin.HermesPluginTests) ... ok
+test_register_uses_public_slash_command_api (test_hermes_plugin.HermesPluginTests) ... ok
+test_all_host_and_edition_combinations_install_and_update (test_installer.InstallerTests) ... ok
+test_classic_install_makes_observability_hook_executable (test_installer.InstallerTests) ... ok
+test_codebuddy_copy_contains_runnable_generic_adapter_installer (test_installer.InstallerTests) ... ok
+test_codebuddy_portable_agents_use_autorun_bypass_permissions (test_installer.InstallerTests) ... ok
+test_doctor_lists_paths_and_keeps_exit_code (test_installer.InstallerTests) ... ok
+test_dsh_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_edition_registry_is_complete_and_sources_exist (test_installer.InstallerTests) ... ok
+test_editions_and_plan_make_the_split_visible_without_writing (test_installer.InstallerTests) ... ok
+test_force_edition_switch_preserves_modified_old_only_file (test_installer.InstallerTests) ... ok
+test_force_install_switches_editions_in_both_directions (test_installer.InstallerTests) ... ok
+test_force_replaces_conflicting_skill_symlink_without_touching_target (test_installer.InstallerTests) ... ok
+test_force_update_overwrites_modified_managed_file (test_installer.InstallerTests) ... ok
+test_hermes_installs_project_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_install_output_names_project_and_next_entrypoint (test_installer.InstallerTests) ... ok
+test_pi_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_pi_is_portable_only (test_installer.InstallerTests) ... ok
+test_portable_install_keeps_skill_manifest_with_copied_skills (test_installer.InstallerTests) ... ok
+test_same_host_cannot_mix_editions (test_installer.InstallerTests) ... ok
+test_skills_command_installs_and_manages_portable_edition (test_installer.InstallerTests) ... ok
+test_skills_status_files (test_installer.InstallerTests) ... ok
+test_status_and_doctor_without_new_flags_keep_current_strings (test_installer.InstallerTests) ... ok
+test_status_files_clean_install_lists_nothing (test_installer.InstallerTests) ... ok
+test_status_files_does_not_weaken_user_file_protection (test_installer.InstallerTests) ... ok
+test_status_files_lists_edited_deleted_directory_and_symlink (test_installer.InstallerTests) ... ok
+test_status_json_files_keys (test_installer.InstallerTests) ... ok
+test_status_patch_binary_file (test_installer.InstallerTests) ... ok
+test_status_patch_contains_edited_line (test_installer.InstallerTests) ... ok
+test_status_patch_labels_package_content_change (test_installer.InstallerTests) ... ok
+test_uninstall_preserves_modified_file (test_installer.InstallerTests) ... ok
+test_untracked_user_file_conflict_is_atomic (test_installer.InstallerTests) ... ok
+test_update_rejects_modified_managed_file (test_installer.InstallerTests) ... ok
+test_update_restores_missing_executable_bit_on_hook (test_installer.InstallerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 34 tests in 1.782s
+
+OK
+OK: skills install host=codex project=/tmp/tmpgr_sqeun/project written=90 unchanged=0
+Next: reopen Codex and run $devflow <你的需求>
+EXIT:0

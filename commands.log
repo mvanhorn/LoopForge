@@ -1,0 +1,64 @@
+$ loopforge install claude --project-root .
+OK: install edition=classic host=claude project=/tmp/status-files-demo written=81 unchanged=0
+Next: reopen Claude Code and run /start-devflow <你的需求>
+exit=0
+
+$ loopforge status claude --project-root .
+classic/claude: files=81 changed=0 missing=0
+exit=0
+
+$ printf '%s\n' 'status-files-demo-edit' >> .claude/README.md
+exit=0
+
+$ rm .claude/commands/abort-devflow.md
+exit=0
+
+$ loopforge status claude --project-root .
+classic/claude: files=81 changed=1 missing=1
+exit=0
+
+$ loopforge status claude --files --project-root .
+classic/claude: files=81 changed=1 missing=1
+  changed  .claude/README.md
+  missing  .claude/commands/abort-devflow.md
+exit=0
+
+$ loopforge status claude --patch --project-root .
+classic/claude: files=81 changed=1 missing=1
+  changed  .claude/README.md
+  missing  .claude/commands/abort-devflow.md
+--- a/.claude/README.md (package 0.2.3)
++++ b/.claude/README.md (project)
+@@ -12,3 +12,4 @@
+ - 终止：`/abort-devflow <task_slug>`
+ 
+ 单阶段命令见 `commands/`，状态和产物协议见 `runtime/`。
++status-files-demo-edit
+exit=0
+
+$ loopforge doctor --project-root .
+ERROR:
+- classic:claude: changed=1 missing=1
+  changed  .claude/README.md
+  missing  .claude/commands/abort-devflow.md
+  完整列表: loopforge status claude --files
+exit=1
+
+$ loopforge status claude --files --json --project-root . | python3 -m json.tool
+[
+    {
+        "key": "classic:claude",
+        "host": "claude",
+        "edition": "classic",
+        "files": 81,
+        "changed": 1,
+        "missing": 1,
+        "changed_files": [
+            ".claude/README.md"
+        ],
+        "missing_files": [
+            ".claude/commands/abort-devflow.md"
+        ]
+    }
+]
+exit=0

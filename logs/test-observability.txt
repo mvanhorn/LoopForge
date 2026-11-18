@@ -1,0 +1,26 @@
+== agent-observability unit tests (.codebuddy)
+...................................................................................................................................
+----------------------------------------------------------------------
+Ran 131 tests in 0.090s
+
+OK
+wrote /tmp/tmp_vv1a4sf/dashboard-data.json (0 events, 0 sessions, 0 devflow runs)
+wrote /tmp/tmp9ynqch7i/dashboard-data.json (1 events, 1 sessions, 0 devflow runs)
+== agent-observability unit tests (.cursor)
+...................................................................................................................................
+----------------------------------------------------------------------
+Ran 131 tests in 0.088s
+
+OK
+wrote /tmp/tmpwsn4bkbu/dashboard-data.json (0 events, 0 sessions, 0 devflow runs)
+wrote /tmp/tmpqznuuyre/dashboard-data.json (1 events, 1 sessions, 0 devflow runs)
+== agent-observability unit tests (.claude)
+...................................................................................................................................
+----------------------------------------------------------------------
+Ran 131 tests in 0.088s
+
+OK
+wrote /tmp/tmp95c2brie/dashboard-data.json (0 events, 0 sessions, 0 devflow runs)
+wrote /tmp/tmp__wykh1i/dashboard-data.json (1 events, 1 sessions, 0 devflow runs)
+Observability tests passed and left the source tree clean.
+EXIT:0
