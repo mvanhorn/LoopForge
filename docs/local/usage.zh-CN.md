@@ -158,15 +158,28 @@ npm install --global loopforge-cli
 # Classic Edition
 loopforge update <agent>
 loopforge status <agent>
+loopforge status <agent> --files
+loopforge status <agent> --patch
 loopforge uninstall <agent>
 
 # Portable Edition
 loopforge skills update <agent>
 loopforge skills status <agent>
+loopforge skills status <agent> --files
 loopforge skills uninstall <agent>
 ```
 
-安装状态保存在 `.devflow/install-state.json`。检测到用户修改或文件冲突时，更新会停止而不是覆盖。只有在确认要替换冲突文件或切换 Edition 时才使用 `--force`，建议先运行 `loopforge plan` 检查变更。
+安装状态保存在 `.devflow/install-state.json`。`loopforge status` 和 `loopforge skills status` 会打印文件计数。加上 `--files` 可列出每个已变更或缺失的安装路径；`--patch`（隐含 `--files`）会把每个已变更文本文件与当前安装包内容做 unified diff。`loopforge doctor` 最多列出 10 条路径，并提示使用 `loopforge status <agent> --files`。检测到用户修改或文件冲突时，更新会停止而不是覆盖。只有在确认要替换冲突文件或切换 Edition 时才使用 `--force`，建议先运行 `loopforge plan` 检查变更。
+
+```bash
+loopforge status claude --files
+```
+
+```text
+classic/claude: files=81 changed=1 missing=1
+  changed  .claude/README.md
+  missing  .claude/commands/abort-devflow.md
+```
 
 如果已经克隆本仓库，也可以在仓库根目录从当前源码安装：
 

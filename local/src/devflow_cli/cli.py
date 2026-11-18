@@ -5,7 +5,16 @@ import sys
 from pathlib import Path
 
 from . import __version__
-from .core import DevFlowError, apply_install, build_plan, doctor, status_rows, uninstall, validate_choice
+from .core import (
+    DevFlowError,
+    apply_install,
+    build_plan,
+    doctor,
+    installation_file_states,
+    status_file_patches,
+    uninstall,
+    validate_choice,
+)
 from .editions import DEFAULT_EDITION, EDITIONS, HOSTS, entrypoint_for, host_label, source_for, spec
 from .targets import load
 
@@ -52,7 +61,7 @@ def parser() -> argparse.ArgumentParser:
     item = skills_sub.add_parser("status", help="查看 Portable Agent Skills 状态")
     item.add_argument("host", choices=HOSTS, nargs="?")
     item.add_argument("--project-root", type=Path, default=Path.cwd())
-    item.add_argument("--json", action="store_true")
+    _add_status_flags(item)
     item = skills_sub.add_parser("uninstall", help="卸载 Portable Agent Skills")
     item.add_argument("host", choices=HOSTS)
     item.add_argument("--project-root", type=Path, default=Path.cwd())
@@ -71,7 +80,7 @@ def parser() -> argparse.ArgumentParser:
     item = sub.add_parser("status")
     item.add_argument("host", choices=HOSTS, nargs="?")
     item.add_argument("--project-root", type=Path, default=Path.cwd())
-    item.add_argument("--json", action="store_true")
+    _add_status_flags(item)
     item = sub.add_parser("uninstall")
     item.add_argument("host", choices=HOSTS)
     item.add_argument("--edition", choices=EDITIONS)
@@ -79,6 +88,68 @@ def parser() -> argparse.ArgumentParser:
     item = sub.add_parser("doctor")
     item.add_argument("--project-root", type=Path, default=Path.cwd())
     return result
+
+
+def _add_status_flags(item: argparse.ArgumentParser) -> None:
+    item.add_argument("--json", action="store_true")
+    item.add_argument(
+        "--files", action="store_true",
+        help="列出变更和缺失的已安装文件",
+    )
+    item.add_argument(
+        "--patch", action="store_true",
+        help="显示已变更文件与当前安装包内容的 unified diff（隐含 --files）",
+    )
+
+
+def _status_payload(rows: list, include_files: bool) -> list:
+    payload = []
+    for row in rows:
+        item = {
+            "key": row["key"],
+            "host": row["host"],
+            "edition": row["edition"],
+            "files": row["files"],
+            "changed": row["changed"],
+            "missing": row["missing"],
+        }
+        if include_files:
+            item["changed_files"] = row["changed_files"]
+            item["missing_files"] = row["missing_files"]
+        payload.append(item)
+    return payload
+
+
+def _emit_status(args, rows, empty_message: str, skills: bool = False) -> None:
+    include_files = bool(args.files or args.patch)
+    if args.json:
+        print(json.dumps(_status_payload(rows, include_files), ensure_ascii=False, indent=2))
+        return
+    if not rows:
+        print(empty_message)
+        return
+    project = args.project_root.resolve()
+    for row in rows:
+        if skills:
+            print(
+                f"skills/{row['host']}: files={row['files']} "
+                f"changed={row['changed']} missing={row['missing']}"
+            )
+        else:
+            print(
+                f"{row['edition']}/{row['host']}: files={row['files']} "
+                f"changed={row['changed']} missing={row['missing']}"
+            )
+        if include_files:
+            for path in row["changed_files"]:
+                print(f"  changed  {path}")
+            for path in row["missing_files"]:
+                print(f"  missing  {path}")
+        if args.patch:
+            for block in status_file_patches(
+                project, row["host"], row["edition"], row["changed_files"],
+            ):
+                print(block)
 
 
 def main(argv=None) -> int:
@@ -175,19 +246,10 @@ def main(argv=None) -> int:
                 return 0
             if args.skills_command == "status":
                 rows = [
-                    row for row in status_rows(args.project_root, args.host)
+                    row for row in installation_file_states(args.project_root, args.host)
                     if row["edition"] == "portable"
                 ]
-                if args.json:
-                    print(json.dumps(rows, ensure_ascii=False, indent=2))
-                elif not rows:
-                    print("skills not installed")
-                else:
-                    for row in rows:
-                        print(
-                            f"skills/{row['host']}: files={row['files']} "
-                            f"changed={row['changed']} missing={row['missing']}"
-                        )
+                _emit_status(args, rows, "skills not installed", skills=True)
                 return 0
             removed, preserved = uninstall(args.project_root, args.host, "portable")
             print(
@@ -198,17 +260,8 @@ def main(argv=None) -> int:
                 print("Preserved user-modified files: " + ", ".join(preserved))
             return 0
         if args.command == "status":
-            rows = status_rows(args.project_root, args.host)
-            if args.json:
-                print(json.dumps(rows, ensure_ascii=False, indent=2))
-            elif not rows:
-                print("not installed")
-            else:
-                for row in rows:
-                    print(
-                        f"{row['edition']}/{row['host']}: files={row['files']} "
-                        f"changed={row['changed']} missing={row['missing']}"
-                    )
+            rows = installation_file_states(args.project_root, args.host)
+            _emit_status(args, rows, "not installed")
             return 0
         if args.command == "uninstall":
             removed, preserved = uninstall(args.project_root, args.host, args.edition)

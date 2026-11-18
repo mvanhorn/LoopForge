@@ -1,3 +1,4 @@
+import difflib
 import hashlib
 import json
 import os
@@ -15,6 +16,7 @@ from .editions import EDITIONS, HOSTS, hosts_for, source_for
 
 STATE_VERSION = 1
 STATE_PATH = Path(".devflow/install-state.json")
+DOCTOR_FILE_LIST_LIMIT = 10
 
 
 class DevFlowError(RuntimeError):
@@ -407,24 +409,113 @@ def uninstall(project: Path, host: str, edition: Optional[str] = None) -> Tuple[
     return removed, preserved
 
 
-def status_rows(project: Path, host: Optional[str] = None) -> List[dict]:
-    state = load_state(project.resolve())
+def _installed_file_kind(project: Path, record: dict) -> Optional[str]:
+    path = project / record["path"]
+    if path.is_symlink() or (path.exists() and not path.is_file()):
+        return "changed"
+    if not path.is_file():
+        return "missing"
+    if digest(path.read_bytes()) != record["sha256"]:
+        return "changed"
+    return None
+
+
+def installation_file_states(project: Path, host: Optional[str] = None) -> List[dict]:
+    project = project.resolve()
+    state = load_state(project)
     rows = []
     for key, item in sorted(state["installations"].items()):
         if host and item.get("host") != host:
             continue
-        changed = missing = 0
+        changed_files = []
+        missing_files = []
         for record in item["files"]:
-            path = project.resolve() / record["path"]
-            if not path.is_file():
-                missing += 1
-            elif digest(path.read_bytes()) != record["sha256"]:
-                changed += 1
+            kind = _installed_file_kind(project, record)
+            if kind == "changed":
+                changed_files.append(record["path"])
+            elif kind == "missing":
+                missing_files.append(record["path"])
+        changed_files.sort()
+        missing_files.sort()
         rows.append({
-            "key": key, "host": item["host"], "edition": item["edition"],
-            "files": len(item["files"]), "changed": changed, "missing": missing,
+            "key": key,
+            "host": item["host"],
+            "edition": item["edition"],
+            "files": len(item["files"]),
+            "changed": len(changed_files),
+            "missing": len(missing_files),
+            "changed_files": changed_files,
+            "missing_files": missing_files,
         })
     return rows
+
+
+def status_rows(project: Path, host: Optional[str] = None) -> List[dict]:
+    keys = ("key", "host", "edition", "files", "changed", "missing")
+    return [{key: row[key] for key in keys} for row in installation_file_states(project, host)]
+
+
+def _decode_text(data: bytes) -> Optional[str]:
+    if b"\0" in data:
+        return None
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError:
+        return None
+
+
+def _changed_file_patch(
+    project: Path,
+    relative: str,
+    recorded_hash: Optional[str],
+    package_data: Optional[bytes],
+) -> str:
+    if package_data is None or recorded_hash is None or digest(package_data) != recorded_hash:
+        return f"{relative}: package content changed since install"
+    path = project / relative
+    if path.is_symlink() or not path.is_file():
+        return f"{relative}: binary file differs"
+    current = path.read_bytes()
+    package_text = _decode_text(package_data)
+    project_text = _decode_text(current)
+    if package_text is None or project_text is None:
+        return f"{relative}: binary file differs"
+    diff = "".join(difflib.unified_diff(
+        package_text.splitlines(True),
+        project_text.splitlines(True),
+        fromfile=f"a/{relative} (package {__version__})",
+        tofile=f"b/{relative} (project)",
+    ))
+    if not diff:
+        return f"{relative}: binary file differs"
+    return diff.rstrip("\n")
+
+
+def status_file_patches(
+    project: Path,
+    host: str,
+    edition: str,
+    changed_files: List[str],
+) -> List[str]:
+    if not changed_files:
+        return []
+    project = project.resolve()
+    state = load_state(project)
+    item = state["installations"].get(installation_key(host, edition), {})
+    recorded = {
+        record["path"]: record.get("sha256")
+        for record in item.get("files", [])
+        if isinstance(record, dict)
+    }
+    plan = build_plan(host, edition)
+    blocks = []
+    for relative in changed_files:
+        payload = plan.get(relative)
+        package_data = payload[0] if payload else None
+        blocks.append(_changed_file_patch(
+            project, relative, recorded.get(relative), package_data,
+        ))
+    return blocks
 
 
 def doctor(project: Path) -> List[str]:
@@ -436,7 +527,15 @@ def doctor(project: Path) -> List[str]:
     for required in ("skills/manifest.json", "skills/devflow/SKILL.md", ".codebuddy", ".codex", ".cursor", ".claude"):
         if not (root / required).exists():
             problems.append(f"安装资产缺失: {required}")
-    for row in status_rows(project):
+    for row in installation_file_states(project):
         if row["changed"] or row["missing"]:
-            problems.append(f"{row['key']}: changed={row['changed']} missing={row['missing']}")
+            lines = [f"{row['key']}: changed={row['changed']} missing={row['missing']}"]
+            listed = (
+                [("changed", path) for path in row["changed_files"]]
+                + [("missing", path) for path in row["missing_files"]]
+            )
+            for kind, path in listed[:DOCTOR_FILE_LIST_LIMIT]:
+                lines.append(f"  {kind}  {path}")
+            lines.append(f"  完整列表: loopforge status {row['host']} --files")
+            problems.append("\n".join(lines))
     return problems

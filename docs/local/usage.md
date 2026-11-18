@@ -159,15 +159,28 @@ Then maintain an installation with the same agent names as above (`codebuddy`, `
 # Classic Edition
 loopforge update <agent>
 loopforge status <agent>
+loopforge status <agent> --files
+loopforge status <agent> --patch
 loopforge uninstall <agent>
 
 # Portable Edition
 loopforge skills update <agent>
 loopforge skills status <agent>
+loopforge skills status <agent> --files
 loopforge skills uninstall <agent>
 ```
 
-Installation state is stored in `.devflow/install-state.json`. An update stops instead of overwriting user-modified or conflicting files. Use `--force` only when you intend to replace conflicts or switch editions, preferably after inspecting `loopforge plan`.
+Installation state is stored in `.devflow/install-state.json`. `loopforge status` and `loopforge skills status` print file counts. Pass `--files` to list each changed or missing installed path, and `--patch` (which implies `--files`) to print a unified diff of each changed text file against the current package. `loopforge doctor` lists up to ten of those paths and points to `loopforge status <agent> --files`. An update stops instead of overwriting user-modified or conflicting files. Use `--force` only when you intend to replace conflicts or switch editions, preferably after inspecting `loopforge plan`.
+
+```bash
+loopforge status claude --files
+```
+
+```text
+classic/claude: files=81 changed=1 missing=1
+  changed  .claude/README.md
+  missing  .claude/commands/abort-devflow.md
+```
 
 If you have cloned this repository, install the LoopForge CLI from the current source tree by running this in the repository root:
 

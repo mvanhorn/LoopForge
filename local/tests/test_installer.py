@@ -1,3 +1,4 @@
+import json
 import os
 import stat
 import subprocess
@@ -325,6 +326,242 @@ class InstallerTests(unittest.TestCase):
             self.assertEqual(0, written)
             self.assertGreater(unchanged, 0)
             self.assertTrue(hook.stat().st_mode & stat.S_IXUSR)
+
+    def _cli(self, project, *argv):
+        output = StringIO()
+        with redirect_stdout(output):
+            code = main(list(argv) + ["--project-root", str(project)])
+        return code, output.getvalue()
+
+    def test_status_files_clean_install_lists_nothing(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            code, text = self._cli(project, "status", "claude", "--files")
+            self.assertEqual(0, code)
+            row = status_rows(project, "claude")[0]
+            self.assertEqual(
+                f"classic/claude: files={row['files']} changed=0 missing=0\n",
+                text,
+            )
+            self.assertNotIn("  changed  ", text)
+            self.assertNotIn("  missing  ", text)
+
+    def test_status_files_lists_edited_deleted_directory_and_symlink(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            edited = project / ".claude/README.md"
+            edited.write_text(edited.read_text(encoding="utf-8") + "status-files-marker-line\n", encoding="utf-8")
+            missing = project / ".claude/commands/abort-devflow.md"
+            missing.unlink()
+            as_dir = project / ".claude/commands/git-commit.md"
+            as_dir.unlink()
+            as_dir.mkdir()
+            as_link = project / ".claude/commands/git-prepare.md"
+            as_link.unlink()
+            as_link.symlink_to("git-commit.md")
+
+            row = status_rows(project, "claude")[0]
+            self.assertEqual(
+                {"key", "host", "edition", "files", "changed", "missing"},
+                set(row),
+            )
+            self.assertEqual(3, row["changed"])
+            self.assertEqual(1, row["missing"])
+
+            code, text = self._cli(project, "status", "claude", "--files")
+            self.assertEqual(0, code)
+            self.assertEqual(
+                "classic/claude: files={files} changed=3 missing=1\n"
+                "  changed  .claude/README.md\n"
+                "  changed  .claude/commands/git-commit.md\n"
+                "  changed  .claude/commands/git-prepare.md\n"
+                "  missing  .claude/commands/abort-devflow.md\n".format(files=row["files"]),
+                text,
+            )
+
+    def test_status_json_files_keys(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            (project / ".claude/README.md").write_text("user changed\n", encoding="utf-8")
+            (project / ".claude/commands/abort-devflow.md").unlink()
+
+            code, text = self._cli(project, "status", "claude", "--json")
+            self.assertEqual(0, code)
+            payload = json.loads(text)
+            self.assertEqual(
+                ["key", "host", "edition", "files", "changed", "missing"],
+                list(payload[0]),
+            )
+            self.assertNotIn("changed_files", payload[0])
+            self.assertNotIn("missing_files", payload[0])
+
+            code, text = self._cli(project, "status", "claude", "--json", "--files")
+            self.assertEqual(0, code)
+            payload = json.loads(text)
+            self.assertEqual([".claude/README.md"], payload[0]["changed_files"])
+            self.assertEqual([".claude/commands/abort-devflow.md"], payload[0]["missing_files"])
+            self.assertEqual(1, payload[0]["changed"])
+            self.assertEqual(1, payload[0]["missing"])
+
+            code, text = self._cli(project, "status", "claude", "--json", "--patch")
+            self.assertEqual(0, code)
+            payload = json.loads(text)
+            self.assertEqual([".claude/README.md"], payload[0]["changed_files"])
+            self.assertEqual([".claude/commands/abort-devflow.md"], payload[0]["missing_files"])
+
+    def test_status_patch_contains_edited_line(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            edited = project / ".claude/README.md"
+            edited.write_text(edited.read_text(encoding="utf-8") + "status-files-marker-line\n", encoding="utf-8")
+            code, text = self._cli(project, "status", "claude", "--patch")
+            self.assertEqual(0, code)
+            self.assertIn("  changed  .claude/README.md", text)
+            self.assertIn("--- a/.claude/README.md (package ", text)
+            self.assertIn("+++ b/.claude/README.md (project)", text)
+            self.assertIn("+status-files-marker-line", text)
+
+    def test_status_patch_labels_package_content_change(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            state_path = project / ".devflow/install-state.json"
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            for record in state["installations"]["classic:claude"]["files"]:
+                if record["path"] == ".claude/README.md":
+                    record["sha256"] = "0" * 64
+                    break
+            else:
+                self.fail("expected .claude/README.md in install state")
+            state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            code, text = self._cli(project, "status", "claude", "--patch")
+            self.assertEqual(0, code)
+            self.assertIn(".claude/README.md: package content changed since install", text)
+            self.assertNotIn("+", text.split("package content changed since install", 1)[-1])
+
+    def test_status_patch_binary_file(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            (project / ".claude/README.md").write_bytes(b"\x00\xff binary-status-files")
+            code, text = self._cli(project, "status", "claude", "--patch")
+            self.assertEqual(0, code)
+            self.assertIn(".claude/README.md: binary file differs", text)
+            self.assertNotIn("binary-status-files", text)
+
+    def test_skills_status_files(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "codex", "portable")
+            managed = project / ".agents/skills/devflow/SKILL.md"
+            managed.write_text(managed.read_text(encoding="utf-8") + "skills-status-files-marker\n", encoding="utf-8")
+            gone = project / ".agents/skills/manifest.json"
+            gone.unlink()
+            code, text = self._cli(project, "skills", "status", "codex", "--files")
+            self.assertEqual(0, code)
+            self.assertIn("skills/codex: files=", text)
+            self.assertIn("  changed  .agents/skills/devflow/SKILL.md", text)
+            self.assertIn("  missing  .agents/skills/manifest.json", text)
+            self.assertNotIn("classic/", text)
+
+    def test_doctor_lists_paths_and_keeps_exit_code(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            code, text = self._cli(project, "doctor")
+            self.assertEqual(0, code)
+            self.assertEqual("OK: assets and installations are healthy\n", text)
+
+            (project / ".claude/README.md").write_text("user changed\n", encoding="utf-8")
+            (project / ".claude/commands/abort-devflow.md").unlink()
+            code, text = self._cli(project, "doctor")
+            self.assertEqual(1, code)
+            self.assertTrue(text.startswith("ERROR:\n- classic:claude: changed=1 missing=1\n"))
+            self.assertIn("  changed  .claude/README.md", text)
+            self.assertIn("  missing  .claude/commands/abort-devflow.md", text)
+            self.assertIn("loopforge status claude --files", text)
+
+            state_path = project / ".devflow/install-state.json"
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            state["installations"]["classic:claude"]["files"].extend(
+                {"path": ".claude/extra-{0:02d}.md".format(index), "sha256": "ab"}
+                for index in range(12)
+            )
+            state_path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            code, text = self._cli(project, "doctor")
+            self.assertEqual(1, code)
+            listed = [line for line in text.splitlines() if line.startswith("  changed  ") or line.startswith("  missing  ")]
+            self.assertEqual(10, len(listed))
+            self.assertIn("loopforge status claude --files", text)
+
+    def test_status_and_doctor_without_new_flags_keep_current_strings(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            row = status_rows(project, "claude")[0]
+            code, text = self._cli(project, "status", "claude")
+            self.assertEqual(0, code)
+            self.assertEqual(
+                f"classic/claude: files={row['files']} changed=0 missing=0\n",
+                text,
+            )
+            code, text = self._cli(project, "status", "claude", "--json")
+            self.assertEqual(0, code)
+            self.assertEqual(
+                json.dumps([{
+                    "key": "classic:claude",
+                    "host": "claude",
+                    "edition": "classic",
+                    "files": row["files"],
+                    "changed": 0,
+                    "missing": 0,
+                }], ensure_ascii=False, indent=2) + "\n",
+                text,
+            )
+
+            edited = project / ".claude/README.md"
+            edited.write_text("user changed\n", encoding="utf-8")
+            (project / ".claude/commands/abort-devflow.md").unlink()
+            code, text = self._cli(project, "status", "claude")
+            self.assertEqual(0, code)
+            self.assertEqual(
+                f"classic/claude: files={row['files']} changed=1 missing=1\n",
+                text,
+            )
+
+            apply_install(project, "codex", "portable")
+            code, text = self._cli(project, "skills", "status", "codex")
+            portable = [item for item in status_rows(project, "codex") if item["edition"] == "portable"][0]
+            self.assertEqual(0, code)
+            self.assertEqual(
+                f"skills/codex: files={portable['files']} changed=0 missing=0\n",
+                text,
+            )
+
+            code, text = self._cli(project, "doctor")
+            self.assertEqual(1, code)
+            self.assertIn("ERROR:\n- classic:claude: changed=1 missing=1\n", text)
+
+    def test_status_files_does_not_weaken_user_file_protection(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            project = self.project(temporary)
+            apply_install(project, "claude", "classic")
+            managed = project / ".claude/README.md"
+            managed.write_text("user changed\n", encoding="utf-8")
+            state_path = project / ".devflow/install-state.json"
+            before_state = state_path.read_bytes()
+            before_file = managed.read_bytes()
+            self.assertEqual(0, self._cli(project, "status", "claude", "--files")[0])
+            self.assertEqual(0, self._cli(project, "status", "claude", "--patch")[0])
+            self.assertEqual(before_file, managed.read_bytes())
+            self.assertEqual(before_state, state_path.read_bytes())
+            with self.assertRaises(DevFlowError):
+                apply_install(project, "claude", "classic", update_only=True)
+            self.assertEqual("user changed\n", managed.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":
