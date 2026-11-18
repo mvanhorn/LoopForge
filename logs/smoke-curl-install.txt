@@ -1,0 +1,23 @@
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    43  100    43    0     0  45310      0 --:--:-- --:--:-- --:--:-- 43000
+Downloading LoopForge workflow from http://127.0.0.1:50019/downloads/Tencent/LoopForge/releases/download/v0.1.0/loopforge-workflow.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  571k  100  571k    0     0   363M      0 --:--:-- --:--:-- --:--:--  557M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    92  100    92    0     0  64200      0 --:--:-- --:--:-- --:--:-- 92000
+OK: install edition=classic host=codex project=/tmp/tmp.VGyVBwJGsj/classic-project written=52 unchanged=0
+Next: reopen Codex and run $devflow-codex <你的需求>
+Downloading LoopForge workflow from http://127.0.0.1:50019/downloads/Tencent/LoopForge/releases/download/v0.1.0/loopforge-workflow.tar.gz
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100  571k  100  571k    0     0   319M      0 --:--:-- --:--:-- --:--:--  557M
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100    92  100    92    0     0  69908      0 --:--:-- --:--:-- --:--:-- 92000
+OK: install edition=portable host=claude project=/tmp/tmp.VGyVBwJGsj/portable-project written=90 unchanged=0
+Next: reopen Claude Code and run /devflow <你的需求>
+curl installer smoke tests passed
+smoke-curl-install_exit:0

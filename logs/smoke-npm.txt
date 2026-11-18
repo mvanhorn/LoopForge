@@ -1,0 +1,28 @@
+
+> loopforge-cli@0.2.3 prepack
+> python3 scripts/prepare-notices.py
+
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.3
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+npm notice To update run: npm install -g npm@12.2.3
+npm notice
+0.2.3
+OK: install edition=classic host=codex project=/tmp/tmp.wlHAUxQf08/npx project written=52 unchanged=0
+Next: reopen Codex and run $devflow-codex <你的需求>
+classic/codex: files=52 changed=0 missing=0
+OK: uninstall host=codex removed=52 preserved=0
+0.2.3
+OK: skills install host=claude project=/tmp/tmp.wlHAUxQf08/npm-project written=90 unchanged=0
+Next: reopen Claude Code and run /devflow <你的需求>
+skills/claude: files=90 changed=0 missing=0
+OK: skills uninstall host=claude removed=90 preserved=0
+Created /tmp/tmp.wlHAUxQf08/release/loopforge-workflow.tar.gz
+Created /tmp/tmp.wlHAUxQf08/release/loopforge-workflow.tar.gz.sha256
+0.2.3
+
+> loopforge-cli@0.2.3 prepack
+> python3 scripts/prepare-notices.py
+
+npm/npx and release archive smoke tests passed
+smoke-npm_exit:0

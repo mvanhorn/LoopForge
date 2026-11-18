@@ -1,0 +1,3 @@
+=== build-classic-hosts --check ===
+OK: Classic Cursor/Claude bundles match their generator
+build-classic-hosts_exit:0

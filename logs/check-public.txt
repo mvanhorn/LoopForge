@@ -1,0 +1,3 @@
+=== check-public.py ===
+Public content check passed (local ignored files were not read).
+check-public_exit:0

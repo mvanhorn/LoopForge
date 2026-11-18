@@ -1,0 +1,41 @@
+test_commands_use_project_state_and_leave_profile_unmodified (test_hermes_plugin.HermesPluginTests) ... ok
+test_register_uses_public_slash_command_api (test_hermes_plugin.HermesPluginTests) ... ok
+test_all_host_and_edition_combinations_install_and_update (test_installer.InstallerTests) ... ok
+test_classic_install_makes_observability_hook_executable (test_installer.InstallerTests) ... ok
+test_codebuddy_copy_contains_runnable_generic_adapter_installer (test_installer.InstallerTests) ... ok
+test_codebuddy_portable_agents_use_autorun_bypass_permissions (test_installer.InstallerTests) ... ok
+test_dry_run_after_install_is_all_unchanged (test_installer.InstallerTests) ... ok
+test_dry_run_blocking_parent_is_conflict (test_installer.InstallerTests) ... ok
+test_dry_run_dropped_tracked_file_is_remove (test_installer.InstallerTests) ... ok
+test_dry_run_edition_switch_requires_force (test_installer.InstallerTests) ... ok
+test_dry_run_fresh_install_is_all_add_and_writes_nothing (test_installer.InstallerTests) ... ok
+test_dry_run_json_and_update_without_install (test_installer.InstallerTests) ... ok
+test_dry_run_plan_matches_apply_install (test_installer.InstallerTests) ... ok
+test_dry_run_untracked_user_file_at_bundle_path (test_installer.InstallerTests) ... ok
+test_dry_run_user_modified_tracked_file_conflict_and_force_overwrite (test_installer.InstallerTests) ... ok
+test_dsh_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_edition_registry_is_complete_and_sources_exist (test_installer.InstallerTests) ... ok
+test_editions_and_plan_make_the_split_visible_without_writing (test_installer.InstallerTests) ... ok
+test_force_edition_switch_preserves_modified_old_only_file (test_installer.InstallerTests) ... ok
+test_force_install_switches_editions_in_both_directions (test_installer.InstallerTests) ... ok
+test_force_replaces_conflicting_skill_symlink_without_touching_target (test_installer.InstallerTests) ... ok
+test_force_update_overwrites_modified_managed_file (test_installer.InstallerTests) ... ok
+test_hermes_installs_project_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_install_output_names_project_and_next_entrypoint (test_installer.InstallerTests) ... ok
+test_pi_installs_portable_skills_and_rejects_classic (test_installer.InstallerTests) ... ok
+test_pi_is_portable_only (test_installer.InstallerTests) ... ok
+test_portable_install_keeps_skill_manifest_with_copied_skills (test_installer.InstallerTests) ... ok
+test_same_host_cannot_mix_editions (test_installer.InstallerTests) ... ok
+test_skills_command_installs_and_manages_portable_edition (test_installer.InstallerTests) ... ok
+test_uninstall_preserves_modified_file (test_installer.InstallerTests) ... ok
+test_untracked_user_file_conflict_is_atomic (test_installer.InstallerTests) ... ok
+test_update_rejects_modified_managed_file (test_installer.InstallerTests) ... ok
+test_update_restores_missing_executable_bit_on_hook (test_installer.InstallerTests) ... ok
+
+----------------------------------------------------------------------
+Ran 33 tests in 2.628s
+
+OK
+OK: skills install host=codex project=/tmp/tmpfncy4ud_/project written=90 unchanged=0
+Next: reopen Codex and run $devflow <你的需求>
+unittest_py38_exit:0

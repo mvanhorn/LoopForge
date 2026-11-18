@@ -1,0 +1,133 @@
+$ loopforge install claude --dry-run
+DRY RUN: install edition=classic host=claude add=81 update=0 unchanged=0 remove=0 conflict=0
+  add .claude/.devflow-generated.json
+  add .claude/README.md
+  add .claude/agents/devflow-architect.md
+  add .claude/agents/devflow-code-reviewer.md
+  add .claude/agents/devflow-developer.md
+  add .claude/agents/devflow-knowledge-engineer.md
+  add .claude/agents/devflow-leader.md
+  add .claude/agents/devflow-solo-developer.md
+  add .claude/agents/devflow-test-engineer.md
+  add .claude/assets/devflow.defaults.yaml
+  add .claude/assets/sub-developer-prompt.md
+  add .claude/assets/workflow-state-template.json
+  add .claude/checklists/gate-code-review.md
+  add .claude/checklists/gate-task-03.md
+  add .claude/commands/abort-devflow.md
+  add .claude/commands/analyze-requirement.md
+  add .claude/commands/design-solution.md
+  add .claude/commands/develop-code.md
+  add .claude/commands/distill-knowledge.md
+  add .claude/commands/git-commit.md
+  add .claude/commands/git-prepare.md
+  add .claude/commands/resume-devflow.md
+  add .claude/commands/review-code.md
+  add .claude/commands/run-tests.md
+  add .claude/commands/start-devflow.md
+  add .claude/commands/status-devflow.md
+  add .claude/rules/architect.md
+  add .claude/rules/code-review.md
+  add .claude/rules/developer.md
+  add .claude/rules/global.md
+  add .claude/rules/knowledge-engineer.md
+  add .claude/rules/lang-golang.md
+  add .claude/rules/leader.md
+  add .claude/rules/sql-standard.md
+  add .claude/rules/tester.md
+  add .claude/runtime/start-workflow.md
+  add .claude/runtime/workflow-state-spec.md
+  add .claude/skills/agent-observability/SKILL.md
+  add .claude/skills/agent-observability/config/pricing.json
+  add .claude/skills/agent-observability/logs/.gitkeep
+  add .claude/skills/agent-observability/references/quickstart.md
+  add .claude/skills/agent-observability/references/schema-v2.md
+  add .claude/skills/agent-observability/scripts/__init__.py
+  add .claude/skills/agent-observability/scripts/build_dashboard_data.py
+  add .claude/skills/agent-observability/scripts/core/__init__.py
+  add .claude/skills/agent-observability/scripts/core/agent_identity.py
+  add .claude/skills/agent-observability/scripts/core/cls_sink.py
+  add .claude/skills/agent-observability/scripts/core/cls_uploader.mjs
+  add .claude/skills/agent-observability/scripts/core/collector.py
+  add .claude/skills/agent-observability/scripts/core/devflow.py
+  add .claude/skills/agent-observability/scripts/core/emitter.py
+  add .claude/skills/agent-observability/scripts/core/envfile.py
+  add .claude/skills/agent-observability/scripts/core/runtime.py
+  add .claude/skills/agent-observability/scripts/core/scanner.py
+  add .claude/skills/agent-observability/scripts/core/state.py
+  add .claude/skills/agent-observability/scripts/dashboard/index.html
+  add .claude/skills/agent-observability/scripts/main.py
+  add .claude/skills/agent-observability/scripts/run_hook.sh
+  add .claude/skills/agent-observability/templates/settings-hook.json
+  add .claude/skills/agent-observability/tests/fixtures/transcript.jsonl
+  add .claude/skills/agent-observability/tests/test_agent_identity.py
+  add .claude/skills/agent-observability/tests/test_build_dashboard_data.py
+  add .claude/skills/agent-observability/tests/test_cls_sink.py
+  add .claude/skills/agent-observability/tests/test_collector.py
+  add .claude/skills/agent-observability/tests/test_devflow.py
+  add .claude/skills/agent-observability/tests/test_pricing_overrides.py
+  add .claude/skills/agent-observability/tests/test_runtime_flow.py
+  add .claude/skills/brainstorming/SKILL.md
+  add .claude/skills/brainstorming/scripts/frame-template.html
+  add .claude/skills/brainstorming/scripts/helper.js
+  add .claude/skills/brainstorming/scripts/server.cjs
+  add .claude/skills/brainstorming/scripts/start-server.sh
+  add .claude/skills/brainstorming/scripts/stop-server.sh
+  add .claude/skills/brainstorming/spec-document-reviewer-prompt.md
+  add .claude/skills/brainstorming/visual-companion.md
+  add .claude/skills/knowledge-distillation/SKILL.md
+  add .claude/skills/tech-design/SKILL.md
+  add .claude/skills/tech-design/references/general.md
+  add .claude/skills/writing-plans/SKILL.md
+  add .claude/skills/writing-plans/plan-document-reviewer-prompt.md
+  add .claude/workflows/devflow.md
+exit=0
+
+$ loopforge install claude
+OK: install edition=classic host=claude project=/tmp/install-dry-run-capture/project written=81 unchanged=0
+Next: reopen Claude Code and run /start-devflow <你的需求>
+exit=0
+
+$ printf '%s\n' 'user changed README' > .claude/README.md
+exit=0
+
+$ git status --porcelain
+exit=0
+
+$ loopforge update claude --dry-run
+DRY RUN: update edition=classic host=claude add=0 update=0 unchanged=80 remove=0 conflict=1
+  conflict .claude/README.md
+exit=1
+
+$ loopforge update claude --dry-run --force
+DRY RUN: update edition=classic host=claude add=0 update=0 unchanged=80 remove=0 conflict=1
+  overwrite .claude/README.md
+exit=0
+
+$ git status --porcelain
+exit=0
+
+$ find . -newer ../stamp ! -path './.git' ! -path './.git/*' -print
+exit=0
+
+$ loopforge update claude --dry-run --json | python3 -m json.tool
+{
+    "command": "update",
+    "edition": "classic",
+    "host": "claude",
+    "add": 0,
+    "update": 0,
+    "unchanged": 80,
+    "remove": 0,
+    "conflict": 1,
+    "force": false,
+    "switch": null,
+    "files": [
+        {
+            "path": ".claude/README.md",
+            "action": "conflict"
+        }
+    ]
+}
+exit=1
+
